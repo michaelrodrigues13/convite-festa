@@ -16,6 +16,7 @@ DATA_FESTA = datetime(2026, 5, 17, 13, 0)
 LOCAL_FESTA = "Rua Jaques Roberto, 225 - Bairro São Marcos"
 MAPS_LINK = "https://www.google.com/maps/search/?api=1&query=Rua+Jaques+Roberto+225+Sao+Marcos"
 MEU_WHATSAPP = "5531975635794"
+ARQUIVO_SAMBA = "samba.mp3"
 
 st.set_page_config(page_title="Quintal do Micha - Oficial", page_icon="🌳", layout="centered")
 
@@ -24,18 +25,20 @@ if "show_login" not in st.session_state: st.session_state["show_login"] = False
 if "music_playing" not in st.session_state: st.session_state["music_playing"] = False
 
 # =========================================================
-# FUNÇÃO PARA CONVERTER IMAGEM PARA BASE64
+# FUNÇÕES DE ASSETS (IMAGEM E ÁUDIO)
 # =========================================================
-def get_base64_image(file_path):
-    with open(file_path, "rb") as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
+def get_base64_file(file_path):
+    if os.path.exists(file_path):
+        with open(file_path, "rb") as f:
+            data = f.read()
+        return base64.b64encode(data).decode()
+    return None
 
-# Carregamento Masterpiece
+# Carregamento Masterpiece Background
 img_path = "quintal.png"
 bg_style = ""
-if os.path.exists(img_path):
-    img_b64 = get_base64_image(img_path)
+img_b64 = get_base64_file(img_path)
+if img_b64:
     bg_style = f"""
     <style>
     .stApp {{
@@ -48,7 +51,7 @@ if os.path.exists(img_path):
     """
 
 # =========================================================
-# DESIGN SYSTEM (EXPERIÊNCIA SONORA)
+# DESIGN SYSTEM
 # =========================================================
 st.markdown('<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">', unsafe_allow_html=True)
 if bg_style: st.markdown(bg_style, unsafe_allow_html=True)
@@ -57,42 +60,25 @@ st.markdown("""
 <style>
 html, body, [class*="st-"] { font-family: "Outfit", sans-serif !important; }
 .stApp { background-color: #0c0f0a; color: #f8fafc; }
-
 label[data-testid="stWidgetLabel"] p { color: #facc15 !important; font-weight: 700; }
 h1, h2, h3 { color: #facc15 !important; font-weight: 900 !important; text-shadow: 2px 2px 10px rgba(0,0,0,1); }
-
 .manga-real-card {
     background: rgba(0,0,0,0.6); backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.1); padding: 25px;
     border-radius: 20px; margin-bottom: 20px; border-left: 5px solid #facc15;
     max-width: 600px; margin-left: auto; margin-right: auto;
 }
-
 .hero-header { text-align: center; padding: 60px 20px 30px 20px; }
-
-/* Botão Especial de Áudio */
-.audio-enter-btn {
-    background: linear-gradient(135deg, #facc15 0%, #a16207 100%);
-    color: #000 !important; font-weight: 900; border: none;
-    padding: 20px 40px; border-radius: 50px; font-size: 1.2rem;
-    box-shadow: 0 10px 30px rgba(250,204,21,0.4); cursor: pointer;
-    transition: 0.3s; width: 100%;
-}
-.audio-enter-btn:hover { transform: scale(1.05); box-shadow: 0 15px 40px rgba(250,204,21,0.6); }
-
 .stButton>button {
     width: 100%; border-radius: 12px; height: 3.5em;
     background: linear-gradient(135deg, #3f6212 0%, #1a2e19 100%);
     color: #fff !important; font-weight: 900; border: 1px solid #facc15;
 }
-
 .cooler-spotlight {
     text-align: center; margin-top: 40px; padding: 35px;
-    background: rgba(250, 204, 21, 0.1);
-    border-radius: 24px; border: 2px solid #facc15;
+    background: rgba(250, 204, 21, 0.1); border-radius: 24px; border: 2px solid #facc15;
     max-width: 600px; margin-left: auto; margin-right: auto;
 }
-
 footer, header, #MainMenu { visibility: hidden; }
 </style>
 """, unsafe_allow_html=True)
@@ -100,7 +86,6 @@ footer, header, #MainMenu { visibility: hidden; }
 # =========================================================
 # CORE LOGIC
 # =========================================================
-
 def normalizar(t):
     return "".join(c for c in unicodedata.normalize('NFD', str(t).strip().lower()) if unicodedata.category(c) != 'Mn') if t else ""
 
@@ -123,30 +108,27 @@ def salvar_confirmacao(nome, vai, n, lista, zap):
 # =========================================================
 # UI CONVIDADO
 # =========================================================
-
 def render_audio_player():
-    # URL de um samba de raiz instrumental de qualidade (exemplo público)
-    audio_url = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" # Placeholder
-    # Para o Michael: Se você tiver o link direto do Arlindo Cruz ou Jorge Aragão, troque aqui!
+    samba_b64 = get_base64_file(ARQUIVO_SAMBA)
     
     if not st.session_state["music_playing"]:
         st.markdown('<div style="text-align:center; padding: 100px 20px;">', unsafe_allow_html=True)
         st.markdown("### 🥁 O Samba já vai começar...")
-        if st.button("🥁 ENTRAR NA RODA DE SAMBA", type="primary", key="start_audio"):
+        if st.button("🥁 ENTRAR NA RODA DE SAMBA", type="primary"):
             st.session_state["music_playing"] = True
             st.rerun()
         st.markdown('</div>', unsafe_allow_html=True)
         return False
     else:
-        # Player invisível que toca após a interação
-        st.markdown(f"""
-            <audio autoplay loop id="samba-player">
-                <source src="{audio_url}" type="audio/mpeg">
-            </audio>
-            <div style="text-align:right; margin-bottom:10px;">
-                <span style="font-size:0.8rem; color:#facc15;">🔊 Samba tocando...</span>
-            </div>
-        """, unsafe_allow_html=True)
+        if samba_b64:
+            st.markdown(f"""
+                <audio autoplay loop>
+                    <source src="data:audio/mp3;base64,{samba_b64}" type="audio/mpeg">
+                </audio>
+                <div style="text-align:right; margin-bottom:10px;">
+                    <span style="font-size:0.8rem; color:#facc15;">🔊 Samba do Micha no ar...</span>
+                </div>
+            """, unsafe_allow_html=True)
         return True
 
 def render_header():
@@ -209,17 +191,13 @@ def render_form():
     st.markdown(f"""
         <div class="cooler-spotlight">
             <p style="font-size:1.5rem; color:#facc15; font-weight:900; margin-bottom:15px;">🍻 TRAGA MUITA ALEGRIA E SUA BEBIDA</p>
-            <p style="font-size:1.1rem; color:#f8fafc; font-weight:400; margin-bottom:20px;">
-                Para sua comodidade, se possível traga seu cooler.
-            </p>
-            <p style="font-size:1.2rem; color:#cbd5e1; font-style:italic;">
-                Nos vemos no samba! 🥁🎸⚽
-            </p>
+            <p style="font-size:1.1rem; color:#f8fafc; font-weight:400; margin-bottom:20px;">Para sua comodidade, se possível traga seu cooler.</p>
+            <p style="font-size:1.2rem; color:#cbd5e1; font-style:italic;">Nos vemos no samba! 🥁🎸⚽</p>
         </div>
     """, unsafe_allow_html=True)
     
     st.write("")
-    if st.button("🔐 GESTÃO", type="secondary", key="btn_gest_audio"):
+    if st.button("🔐 GESTÃO", type="secondary", key="btn_gest_local"):
         st.session_state["show_login"] = not st.session_state["show_login"]; st.rerun()
 
     if st.session_state["show_login"]:
