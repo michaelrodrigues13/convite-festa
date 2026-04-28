@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Teste de Confirmação - Aniversário</title>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.39.0/build/stlite.css"
+    />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.39.0/build/stlite.js"></script>
+    <script>
+      stlite.mount(
+        {
+          requirements: ["pandas"],
+          entrypoint: "app.py",
+          files: {
+            "app.py": `
+import streamlit as st
+import pandas as pd
+import os
+import streamlit.components.v1 as components
+
+# Configuração da página
+st.set_page_config(page_title="Aniversário do Michael", page_icon="🎂", layout="centered")
+
+# =========================================================
+# BANCO DE DADOS LOCAL (CSV)
+# =========================================================
+CSV_FILE = "lista_convidados.csv"
+
+def carregar_dados():
+    if os.path.exists(CSV_FILE):
+        return pd.read_csv(CSV_FILE)
+    return pd.DataFrame(columns=["Nome do Convidado", "Vai Comparecer?", "Acompanhantes"])
+
+def salvar_confirmacao(nome, confirmou, acompanhantes):
+    df = carregar_dados()
+    nova_linha = pd.DataFrame([{
+        "Nome do Convidado": nome, 
+        "Vai Comparecer?": confirmou, 
+        "Acompanhantes": acompanhantes
+    }])
+    df = pd.concat([df, nova_linha], ignore_index=True)
+    df.to_csv(CSV_FILE, index=False)
+
+st.title("🎂 Confirmação de Presença")
+st.subheader("Aniversário do Michael! 🥳")
+
+st.markdown("Por favor, preencha o formulário abaixo para confirmar sua presença. Isso ajuda bastante na organização!")
+
+with st.form("rsvp_form", clear_on_submit=True):
+    nome = st.text_input("Qual o seu nome ou da sua Família?")
+    confirmou = st.radio("Você vai comparecer?", ["Sim", "Não"])
+    acompanhantes = st.number_input("Quantos acompanhantes com você?", min_value=0, step=1)
+    
+    submit = st.form_submit_button("Enviar Confirmação")
+    
+    if submit:
+        if not nome.strip():
+            st.error("Por favor, digite seu nome antes de enviar!")
+        else:
+            salvar_confirmacao(nome, confirmou, acompanhantes)
+            if confirmou == "Sim":
+                st.success(f"Valeu, {nome}! Tudo certo, sua presença foi confirmada e salva com sucesso.")
+                st.balloons()
+            else:
+                st.info(f"Poxa, {nome}. Sentiremos sua falta. Sua resposta foi salva na lista!")
+
+# =========================================================
+# MENU LATERAL - ÁREA DO ADMINISTRADOR
+# =========================================================
+with st.sidebar:
+    st.header("🕵️‍♂️ Área do Administrador")
+    st.markdown("Digite a senha para ver as confirmações.")
+    
+    senha_adm = st.text_input("Senha:", type="password")
+    
+    if senha_adm == "12345":
+        st.success("Acesso liberado!")
+        st.write("---")
+        df_lista = carregar_dados()
+        
+        if not df_lista.empty:
+            st.write(f"**Total de Respostas:** {len(df_lista)}")
+            # Conta apenas quem disse que vai (Sim)
+            total_aprovados = df_lista[df_lista["Vai Comparecer?"] == "Sim"]
+            total_pessoas = len(total_aprovados) + total_aprovados["Acompanhantes"].sum()
+            st.warning(f"**Total Estimado de Pessoas na Festa:** {total_pessoas}")
+            
+            st.dataframe(df_lista, use_container_width=True)
+            
+            # Botão para baixar pro Excel
+            csv_download = df_lista.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="📥 Baixar Tabela (CSV)",
+                data=csv_download,
+                file_name="lista_aniversario.csv",
+                mime="text/csv",
+            )
+        else:
+            st.info("Ninguém confirmou ainda.")
+    elif senha_adm:
+        if senha_adm != "12345":
+            st.error("Senha incorreta.")
+`
+          },
+        },
+        document.getElementById("root")
+      );
+    </script>
+  </body>
+</html>
