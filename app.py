@@ -15,7 +15,6 @@ import urllib.parse
 DATA_FESTA = datetime(2026, 5, 17, 13, 0)
 LOCAL_FESTA = "Rua Jaques Roberto, 225 - Bairro São Marcos"
 MAPS_LINK = "https://www.google.com/maps/search/?api=1&query=Rua+Jaques+Roberto+225+Sao+Marcos"
-CHAVE_PIX = "31975635794"
 MEU_WHATSAPP = "5531975635794"
 
 st.set_page_config(page_title="Quintal do Micha - Oficial", page_icon="🌳", layout="centered")
@@ -48,7 +47,7 @@ if os.path.exists(img_path):
     """
 
 # =========================================================
-# DESIGN SYSTEM (MINIMALISTA TOTAL)
+# DESIGN SYSTEM (ÊNFASE NA BEBIDA)
 # =========================================================
 st.markdown('<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">', unsafe_allow_html=True)
 if bg_style: st.markdown(bg_style, unsafe_allow_html=True)
@@ -86,18 +85,10 @@ h1, h2, h3 { color: #facc15 !important; font-weight: 900 !important; text-shadow
 }
 .stButton>button:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(250,204,21,0.2); }
 
-/* PIX Minimalista */
-.pix-min-text {
-    font-size: 0.85rem !important;
-    color: rgba(255,255,255,0.6) !important;
-    font-style: italic;
-    margin-bottom: 5px;
-}
-.pix-key-min {
-    font-size: 1rem !important;
-    color: #facc15 !important;
-    font-weight: 700;
-    letter-spacing: 1px;
+/* Inputs */
+.stTextInput>div>div>input {
+    background-color: rgba(255, 255, 255, 0.1) !important; color: #fff !important;
+    border: 1px solid rgba(250, 204, 21, 0.3) !important; border-radius: 10px !important;
 }
 
 footer, header, #MainMenu { visibility: hidden; }
@@ -179,7 +170,7 @@ def render_form():
         
         acomps = []
         if n > 0 and vai == "Sim":
-            for i in range(n): acomps.append(st.text_input(f"Acompanhante {i+1}", key=f"f{i}"))
+            for i in range(n): acomps.append(st.text_input(f"Acompanhante {i+1}", key=f"b{i}"))
 
         if st.button("CONFIRMAR PRESENÇA 🚀"):
             if len(nome.strip().split()) < 2: st.error("❌ Nome completo!"); return
@@ -191,49 +182,28 @@ def render_form():
             st.link_button("🔥 AVISAR NO WHATSAPP", f"https://api.whatsapp.com/send?phone={MEU_WHATSAPP}&text={urllib.parse.quote(m)}", use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # Brincadeira do Micha - Versão Minimalista Total
+    # Mensagem com Ênfase na Bebida
     st.markdown(f"""
-        <div style="text-align:center; margin-top:30px; padding:10px;">
-            <p class="pix-min-text">Tragam presentes, kkkkk se quiser fazer um pix também aceito. 😉</p>
-            <span class="pix-key-min">{CHAVE_PIX}</span>
+        <div style="text-align:center; margin-top:40px; padding:20px; background:rgba(250,204,21,0.05); border-radius:20px; border:1px dashed rgba(250,204,21,0.2);">
+            <p style="font-size:1.3rem; color:#facc15; font-weight:900; margin-bottom:10px;">🍺 AVISO DOS PARCEIROS</p>
+            <p style="font-size:1.1rem; color:#f8fafc; font-style:italic; line-height:1.5;">
+                Traga sua alegria e sua bebida<br>
+                <span style="color:#facc15; font-weight:900;">(O cooler é por sua conta! 🍻)</span><br>
+                O show tem que continuar! 🥁🎸
+            </p>
         </div>
     """, unsafe_allow_html=True)
     
-    col_pix, col_ges = st.columns([1, 1])
-    with col_pix:
-        # Botão de cópia ultra compacto via HTML/JS
-        components.html(f"""
-            <div style="text-align:right;">
-                <button onclick="navigator.clipboard.writeText('{CHAVE_PIX}');alert('PIX Copiado! 🎁');" 
-                style="background:rgba(250,204,21,0.2); border:1px solid #facc15; color:#facc15; padding:5px 10px; border-radius:5px; cursor:pointer; font-size:10px; font-weight:900;">
-                    COPIAR PIX 📋
-                </button>
-            </div>
-        """, height=40)
-    with col_ges:
-        if st.button("🔐 GESTÃO", type="secondary", key="btn_gest"):
+    # Gestão Discreta
+    st.write("")
+    col_g = st.columns([1, 1, 1])[1]
+    with col_g:
+        if st.button("🔐 GESTÃO", type="secondary", key="btn_gest_final"):
             st.session_state["show_login"] = not st.session_state["show_login"]; st.rerun()
 
     if st.session_state["show_login"]:
         if st.text_input("SENHA", type="password") == st.secrets["admin"]["password"]:
             st.session_state["is_admin"] = True; st.session_state["show_login"] = False; st.rerun()
-
-# =========================================================
-# ADMIN
-# =========================================================
-
-def render_dashboard(df):
-    st.markdown("<h1 style='color:#facc15;'>📊 PLACAR DO QUINTAL</h1>", unsafe_allow_html=True)
-    conf = df[df["Vai Comparecer?"] == "Sim"]
-    total = int(len(conf) + conf["Acompanhantes"].sum())
-    m1, m2, m3 = st.columns(3)
-    m1.metric("TOTAL", total)
-    m2.metric("RSVPs", len(df))
-    m3.metric("NÃO", len(df[df["Vai Comparecer?"] == "Não"]))
-    df_edit = st.data_editor(df, use_container_width=True, num_rows="dynamic")
-    if st.button("💾 SALVAR"):
-        st.connection("gsheets", type=GSheetsConnection).update(data=df_edit); st.success("✅ Salvo!")
-    if st.button("🚪 SAIR"): st.session_state["is_admin"] = False; st.rerun()
 
 def main():
     if st.session_state["is_admin"]: render_dashboard(carregar_dados())
