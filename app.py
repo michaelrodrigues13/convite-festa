@@ -47,7 +47,7 @@ if os.path.exists(img_path):
     """
 
 # =========================================================
-# DESIGN SYSTEM (COOLER SPOTLIGHT)
+# DESIGN SYSTEM (RESENHA RAIZ REFINADA)
 # =========================================================
 st.markdown('<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">', unsafe_allow_html=True)
 if bg_style: st.markdown(bg_style, unsafe_allow_html=True)
@@ -80,12 +80,13 @@ h1, h2, h3 { color: #facc15 !important; font-weight: 900 !important; text-shadow
     transition: 0.3s;
 }
 
-/* SPOTLIGHT BOX */
+/* SPOTLIGHT BOX REFINADO */
 .cooler-spotlight {
     text-align: center; margin-top: 40px; padding: 35px;
     background: rgba(250, 204, 21, 0.1);
     border-radius: 24px; border: 2px solid #facc15;
     box-shadow: 0 0 30px rgba(250, 204, 21, 0.1);
+    max-width: 600px; margin-left: auto; margin-right: auto;
 }
 
 .stTextInput>div>div>input {
@@ -170,7 +171,7 @@ def render_form():
         
         acomps = []
         if n > 0 and vai == "Sim":
-            for i in range(n): acomps.append(st.text_input(f"Acompanhante {i+1}", key=f"c{i}"))
+            for i in range(n): acomps.append(st.text_input(f"Acompanhante {i+1}", key=f"d{i}"))
 
         if st.button("CONFIRMAR AGORA 🚀"):
             if len(nome.strip().split()) < 2: st.error("❌ Nome completo!"); return
@@ -182,17 +183,14 @@ def render_form():
             st.link_button("🔥 AVISAR NO WHATSAPP", f"https://api.whatsapp.com/send?phone={MEU_WHATSAPP}&text={urllib.parse.quote(m)}", use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # SPOTLIGHT BOX (BEBIDA)
+    # SPOTLIGHT BOX REFINADO
     st.markdown(f"""
         <div class="cooler-spotlight">
-            <p style="font-size:1.4rem; color:#facc15; font-weight:900; margin-bottom:15px; letter-spacing:2px;">⚠️ AVISO IMPORTANTE</p>
-            <p style="font-size:1.3rem; color:#f8fafc; font-weight:700; margin-bottom:10px;">
-                Traga sua alegria e sua bebida!
+            <p style="font-size:1.5rem; color:#facc15; font-weight:900; margin-bottom:15px;">🍻 TRAGA MUITA ALEGRIA E SUA BEBIDA</p>
+            <p style="font-size:1.1rem; color:#f8fafc; font-weight:400; margin-bottom:20px;">
+                Para sua comodidade, se possível traga seu cooler.
             </p>
-            <p style="font-size:1.6rem; color:#facc15; font-weight:900; background:rgba(0,0,0,0.3); padding:10px; border-radius:10px; display:inline-block;">
-                O COOLER É POR SUA CONTA! 🍻🧊
-            </p>
-            <p style="font-size:1.2rem; color:#cbd5e1; margin-top:20px; font-style:italic;">
+            <p style="font-size:1.2rem; color:#cbd5e1; font-style:italic;">
                 Nos vemos no samba! 🥁🎸⚽
             </p>
         </div>
@@ -200,7 +198,7 @@ def render_form():
     
     # Gestão Discreta
     st.write("")
-    if st.button("🔐 GESTÃO", type="secondary", key="btn_gest_spot"):
+    if st.button("🔐 GESTÃO", type="secondary", key="btn_gest_ref"):
         st.session_state["show_login"] = not st.session_state["show_login"]; st.rerun()
 
     if st.session_state["show_login"]:
