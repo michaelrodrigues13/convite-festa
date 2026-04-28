@@ -25,7 +25,7 @@ if "show_login" not in st.session_state: st.session_state["show_login"] = False
 if "music_playing" not in st.session_state: st.session_state["music_playing"] = False
 
 # =========================================================
-# FUNÇÕES DE ASSETS (IMAGEM E ÁUDIO)
+# FUNÇÕES DE ASSETS
 # =========================================================
 def get_base64_file(file_path):
     if os.path.exists(file_path):
@@ -34,7 +34,6 @@ def get_base64_file(file_path):
         return base64.b64encode(data).decode()
     return None
 
-# Carregamento Masterpiece Background
 img_path = "quintal.png"
 bg_style = ""
 img_b64 = get_base64_file(img_path)
@@ -106,7 +105,7 @@ def salvar_confirmacao(nome, vai, n, lista, zap):
     conn.update(data=pd.concat([df, linha], ignore_index=True))
 
 # =========================================================
-# UI CONVIDADO
+# UI CONVIDADO (SMART SAMBA)
 # =========================================================
 def render_audio_player():
     samba_b64 = get_base64_file(ARQUIVO_SAMBA)
@@ -121,14 +120,50 @@ def render_audio_player():
         return False
     else:
         if samba_b64:
-            st.markdown(f"""
-                <audio autoplay loop>
+            # Player Inteligente via HTML/JS
+            components.html(f"""
+                <audio id="samba-player" loop autoplay>
                     <source src="data:audio/mp3;base64,{samba_b64}" type="audio/mpeg">
                 </audio>
-                <div style="text-align:right; margin-bottom:10px;">
-                    <span style="font-size:0.8rem; color:#facc15;">🔊 Samba do Micha no ar...</span>
+                
+                <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px; font-family: sans-serif; color: #facc15;">
+                    <span id="music-status" style="font-size: 0.8rem; font-weight: bold;">🔊 TOCANDO SAMBA</span>
+                    <button id="mute-btn" onclick="toggleMute()" style="background: rgba(250, 204, 21, 0.2); border: 1px solid #facc15; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; color: #facc15; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: 0.3s;">
+                        🔊
+                    </button>
                 </div>
-            """, unsafe_allow_html=True)
+
+                <script>
+                    const player = document.getElementById('samba-player');
+                    const btn = document.getElementById('mute-btn');
+                    const status = document.getElementById('music-status');
+                    
+                    function toggleMute() {{
+                        if (player.muted) {{
+                            player.muted = false;
+                            btn.innerText = '🔊';
+                            status.innerText = '🔊 TOCANDO SAMBA';
+                            btn.style.background = 'rgba(250, 204, 21, 0.2)';
+                        }} else {{
+                            player.muted = true;
+                            btn.innerText = '🔇';
+                            status.innerText = '🔇 SAMBA MUTADO';
+                            btn.style.background = 'rgba(255, 255, 255, 0.1)';
+                        }}
+                    }}
+
+                    // LÓGICA DE PAUSA AUTOMÁTICA (SAIR DA ABA)
+                    document.addEventListener('visibilitychange', function() {{
+                        if (document.hidden) {{
+                            player.pause();
+                        }} else {{
+                            if (!player.muted) {{
+                                player.play();
+                            }}
+                        }}
+                    }});
+                </script>
+            """, height=60)
         return True
 
 def render_header():
@@ -176,7 +211,7 @@ def render_form():
         
         acomps = []
         if n > 0 and vai == "Sim":
-            for i in range(n): acomps.append(st.text_input(f"Acompanhante {i+1}", key=f"e{i}"))
+            for i in range(n): acomps.append(st.text_input(f"Acompanhante {i+1}", key=f"g{i}"))
 
         if st.button("CONFIRMAR AGORA 🚀"):
             if len(nome.strip().split()) < 2: st.error("❌ Nome completo!"); return
@@ -197,7 +232,7 @@ def render_form():
     """, unsafe_allow_html=True)
     
     st.write("")
-    if st.button("🔐 GESTÃO", type="secondary", key="btn_gest_local"):
+    if st.button("🔐 GESTÃO", type="secondary", key="btn_gest_smart"):
         st.session_state["show_login"] = not st.session_state["show_login"]; st.rerun()
 
     if st.session_state["show_login"]:
