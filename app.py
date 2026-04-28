@@ -47,7 +47,7 @@ if os.path.exists(img_path):
     """
 
 # =========================================================
-# DESIGN SYSTEM (ÊNFASE NA BEBIDA)
+# DESIGN SYSTEM (COOLER SPOTLIGHT)
 # =========================================================
 st.markdown('<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">', unsafe_allow_html=True)
 if bg_style: st.markdown(bg_style, unsafe_allow_html=True)
@@ -57,16 +57,13 @@ st.markdown("""
 html, body, [class*="st-"] { font-family: "Outfit", sans-serif !important; }
 .stApp { background-color: #0c0f0a; color: #f8fafc; }
 
-/* Labels em Dourado */
 label[data-testid="stWidgetLabel"] p {
     color: #facc15 !important;
     font-weight: 700 !important;
-    text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
 }
 
 h1, h2, h3 { color: #facc15 !important; font-weight: 900 !important; text-shadow: 2px 2px 10px rgba(0,0,0,1); }
 
-/* Cartões Slim Glass */
 .manga-real-card {
     background: rgba(0,0,0,0.6); backdrop-filter: blur(15px);
     border: 1px solid rgba(255, 255, 255, 0.1); padding: 25px;
@@ -76,16 +73,21 @@ h1, h2, h3 { color: #facc15 !important; font-weight: 900 !important; text-shadow
 
 .hero-header { text-align: center; padding: 60px 20px 30px 20px; }
 
-/* Botões Modernos */
 .stButton>button {
     width: 100%; border-radius: 12px; height: 3.5em;
     background: linear-gradient(135deg, #3f6212 0%, #1a2e19 100%);
     color: #fff !important; font-weight: 900; border: 1px solid #facc15;
-    transition: 0.3s; font-size: 0.9rem;
+    transition: 0.3s;
 }
-.stButton>button:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(250,204,21,0.2); }
 
-/* Inputs */
+/* SPOTLIGHT BOX */
+.cooler-spotlight {
+    text-align: center; margin-top: 40px; padding: 35px;
+    background: rgba(250, 204, 21, 0.1);
+    border-radius: 24px; border: 2px solid #facc15;
+    box-shadow: 0 0 30px rgba(250, 204, 21, 0.1);
+}
+
 .stTextInput>div>div>input {
     background-color: rgba(255, 255, 255, 0.1) !important; color: #fff !important;
     border: 1px solid rgba(250, 204, 21, 0.3) !important; border-radius: 10px !important;
@@ -109,8 +111,6 @@ def carregar_dados():
         df = conn.read(ttl=0).dropna(how="all")
         for c in ["Nome do Convidado", "Vai Comparecer?", "Acompanhantes", "Nomes Acompanhantes", "WhatsApp"]:
             if c not in df.columns: df[c] = ""
-        df["WhatsApp"] = df["WhatsApp"].astype(str)
-        df["Acompanhantes"] = pd.to_numeric(df["Acompanhantes"], errors='coerce').fillna(0).astype(int)
         return df
     except:
         return pd.DataFrame(columns=["Nome do Convidado", "Vai Comparecer?", "Acompanhantes", "Nomes Acompanhantes", "WhatsApp"])
@@ -170,9 +170,9 @@ def render_form():
         
         acomps = []
         if n > 0 and vai == "Sim":
-            for i in range(n): acomps.append(st.text_input(f"Acompanhante {i+1}", key=f"b{i}"))
+            for i in range(n): acomps.append(st.text_input(f"Acompanhante {i+1}", key=f"c{i}"))
 
-        if st.button("CONFIRMAR PRESENÇA 🚀"):
+        if st.button("CONFIRMAR AGORA 🚀"):
             if len(nome.strip().split()) < 2: st.error("❌ Nome completo!"); return
             if normalizar(nome) in black_list: st.error("❌ Já confirmado!"); return
             salvar_confirmacao(nome, vai, n, acomps, zap)
@@ -182,28 +182,47 @@ def render_form():
             st.link_button("🔥 AVISAR NO WHATSAPP", f"https://api.whatsapp.com/send?phone={MEU_WHATSAPP}&text={urllib.parse.quote(m)}", use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # Mensagem com Ênfase na Bebida
+    # SPOTLIGHT BOX (BEBIDA)
     st.markdown(f"""
-        <div style="text-align:center; margin-top:40px; padding:20px; background:rgba(250,204,21,0.05); border-radius:20px; border:1px dashed rgba(250,204,21,0.2);">
-            <p style="font-size:1.3rem; color:#facc15; font-weight:900; margin-bottom:10px;">🍺 AVISO DOS PARCEIROS</p>
-            <p style="font-size:1.1rem; color:#f8fafc; font-style:italic; line-height:1.5;">
-                Traga sua alegria e sua bebida<br>
-                <span style="color:#facc15; font-weight:900;">(O cooler é por sua conta! 🍻)</span><br>
-                O show tem que continuar! 🥁🎸
+        <div class="cooler-spotlight">
+            <p style="font-size:1.4rem; color:#facc15; font-weight:900; margin-bottom:15px; letter-spacing:2px;">⚠️ AVISO IMPORTANTE</p>
+            <p style="font-size:1.3rem; color:#f8fafc; font-weight:700; margin-bottom:10px;">
+                Traga sua alegria e sua bebida!
+            </p>
+            <p style="font-size:1.6rem; color:#facc15; font-weight:900; background:rgba(0,0,0,0.3); padding:10px; border-radius:10px; display:inline-block;">
+                O COOLER É POR SUA CONTA! 🍻🧊
+            </p>
+            <p style="font-size:1.2rem; color:#cbd5e1; margin-top:20px; font-style:italic;">
+                Nos vemos no samba! 🥁🎸⚽
             </p>
         </div>
     """, unsafe_allow_html=True)
     
     # Gestão Discreta
     st.write("")
-    col_g = st.columns([1, 1, 1])[1]
-    with col_g:
-        if st.button("🔐 GESTÃO", type="secondary", key="btn_gest_final"):
-            st.session_state["show_login"] = not st.session_state["show_login"]; st.rerun()
+    if st.button("🔐 GESTÃO", type="secondary", key="btn_gest_spot"):
+        st.session_state["show_login"] = not st.session_state["show_login"]; st.rerun()
 
     if st.session_state["show_login"]:
         if st.text_input("SENHA", type="password") == st.secrets["admin"]["password"]:
             st.session_state["is_admin"] = True; st.session_state["show_login"] = False; st.rerun()
+
+# =========================================================
+# ADMIN
+# =========================================================
+
+def render_dashboard(df):
+    st.markdown("<h1 style='color:#facc15;'>📊 PLACAR DO QUINTAL</h1>", unsafe_allow_html=True)
+    conf = df[df["Vai Comparecer?"] == "Sim"]
+    total = int(len(conf) + conf["Acompanhantes"].sum())
+    m1, m2, m3 = st.columns(3)
+    m1.metric("TOTAL", total)
+    m2.metric("RSVPs", len(df))
+    m3.metric("NÃO", len(df[df["Vai Comparecer?"] == "Não"]))
+    df_edit = st.data_editor(df, use_container_width=True, num_rows="dynamic")
+    if st.button("💾 SALVAR"):
+        st.connection("gsheets", type=GSheetsConnection).update(data=df_edit); st.success("✅ Salvo!")
+    if st.button("🚪 SAIR"): st.session_state["is_admin"] = False; st.rerun()
 
 def main():
     if st.session_state["is_admin"]: render_dashboard(carregar_dados())
