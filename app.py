@@ -21,6 +21,7 @@ st.set_page_config(page_title="Quintal do Micha - Oficial", page_icon="🌳", la
 
 if "is_admin" not in st.session_state: st.session_state["is_admin"] = False
 if "show_login" not in st.session_state: st.session_state["show_login"] = False
+if "music_playing" not in st.session_state: st.session_state["music_playing"] = False
 
 # =========================================================
 # FUNÇÃO PARA CONVERTER IMAGEM PARA BASE64
@@ -47,7 +48,7 @@ if os.path.exists(img_path):
     """
 
 # =========================================================
-# DESIGN SYSTEM (RESENHA RAIZ REFINADA)
+# DESIGN SYSTEM (EXPERIÊNCIA SONORA)
 # =========================================================
 st.markdown('<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">', unsafe_allow_html=True)
 if bg_style: st.markdown(bg_style, unsafe_allow_html=True)
@@ -57,11 +58,7 @@ st.markdown("""
 html, body, [class*="st-"] { font-family: "Outfit", sans-serif !important; }
 .stApp { background-color: #0c0f0a; color: #f8fafc; }
 
-label[data-testid="stWidgetLabel"] p {
-    color: #facc15 !important;
-    font-weight: 700 !important;
-}
-
+label[data-testid="stWidgetLabel"] p { color: #facc15 !important; font-weight: 700; }
 h1, h2, h3 { color: #facc15 !important; font-weight: 900 !important; text-shadow: 2px 2px 10px rgba(0,0,0,1); }
 
 .manga-real-card {
@@ -73,29 +70,30 @@ h1, h2, h3 { color: #facc15 !important; font-weight: 900 !important; text-shadow
 
 .hero-header { text-align: center; padding: 60px 20px 30px 20px; }
 
+/* Botão Especial de Áudio */
+.audio-enter-btn {
+    background: linear-gradient(135deg, #facc15 0%, #a16207 100%);
+    color: #000 !important; font-weight: 900; border: none;
+    padding: 20px 40px; border-radius: 50px; font-size: 1.2rem;
+    box-shadow: 0 10px 30px rgba(250,204,21,0.4); cursor: pointer;
+    transition: 0.3s; width: 100%;
+}
+.audio-enter-btn:hover { transform: scale(1.05); box-shadow: 0 15px 40px rgba(250,204,21,0.6); }
+
 .stButton>button {
     width: 100%; border-radius: 12px; height: 3.5em;
     background: linear-gradient(135deg, #3f6212 0%, #1a2e19 100%);
     color: #fff !important; font-weight: 900; border: 1px solid #facc15;
-    transition: 0.3s;
 }
 
-/* SPOTLIGHT BOX REFINADO */
 .cooler-spotlight {
     text-align: center; margin-top: 40px; padding: 35px;
     background: rgba(250, 204, 21, 0.1);
     border-radius: 24px; border: 2px solid #facc15;
-    box-shadow: 0 0 30px rgba(250, 204, 21, 0.1);
     max-width: 600px; margin-left: auto; margin-right: auto;
 }
 
-.stTextInput>div>div>input {
-    background-color: rgba(255, 255, 255, 0.1) !important; color: #fff !important;
-    border: 1px solid rgba(250, 204, 21, 0.3) !important; border-radius: 10px !important;
-}
-
 footer, header, #MainMenu { visibility: hidden; }
-[data-testid="stHeader"] { background: rgba(0,0,0,0); }
 </style>
 """, unsafe_allow_html=True)
 
@@ -126,6 +124,31 @@ def salvar_confirmacao(nome, vai, n, lista, zap):
 # UI CONVIDADO
 # =========================================================
 
+def render_audio_player():
+    # URL de um samba de raiz instrumental de qualidade (exemplo público)
+    audio_url = "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" # Placeholder
+    # Para o Michael: Se você tiver o link direto do Arlindo Cruz ou Jorge Aragão, troque aqui!
+    
+    if not st.session_state["music_playing"]:
+        st.markdown('<div style="text-align:center; padding: 100px 20px;">', unsafe_allow_html=True)
+        st.markdown("### 🥁 O Samba já vai começar...")
+        if st.button("🥁 ENTRAR NA RODA DE SAMBA", type="primary", key="start_audio"):
+            st.session_state["music_playing"] = True
+            st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
+        return False
+    else:
+        # Player invisível que toca após a interação
+        st.markdown(f"""
+            <audio autoplay loop id="samba-player">
+                <source src="{audio_url}" type="audio/mpeg">
+            </audio>
+            <div style="text-align:right; margin-bottom:10px;">
+                <span style="font-size:0.8rem; color:#facc15;">🔊 Samba tocando...</span>
+            </div>
+        """, unsafe_allow_html=True)
+        return True
+
 def render_header():
     st.markdown(f"""
         <div class="hero-header">
@@ -144,7 +167,7 @@ def render_header():
                     <span style="color:#a3e635; font-weight:700; font-size:1.1rem;">DOMINGO ÀS 13:00H</span>
                 </div>
                 <div style="flex:1; min-width:140px; border-left:1px solid rgba(255,255,255,0.2);">
-                    <span style="color:#facc15; font-weight:700; font-size:0.9rem; text-transform:uppercase;">📍 LOCALIZAÇÃO</span><br>
+                    <span style="color:#facc15; font-weight:700; font-size:0.9rem; text-transform:uppercase;">📍 LOCAL</span><br>
                     <span style="font-size:1.1rem; font-weight:700; display:block; margin-bottom:10px;">Bairro São Marcos</span>
                     <a href="{MAPS_LINK}" target="_blank" style="background:#facc15; color:#000; padding:8px 18px; border-radius:10px; text-decoration:none; font-weight:900; font-size:0.8rem; display:inline-block;">VER MAPA 🗺️</a>
                 </div>
@@ -171,7 +194,7 @@ def render_form():
         
         acomps = []
         if n > 0 and vai == "Sim":
-            for i in range(n): acomps.append(st.text_input(f"Acompanhante {i+1}", key=f"d{i}"))
+            for i in range(n): acomps.append(st.text_input(f"Acompanhante {i+1}", key=f"e{i}"))
 
         if st.button("CONFIRMAR AGORA 🚀"):
             if len(nome.strip().split()) < 2: st.error("❌ Nome completo!"); return
@@ -183,7 +206,6 @@ def render_form():
             st.link_button("🔥 AVISAR NO WHATSAPP", f"https://api.whatsapp.com/send?phone={MEU_WHATSAPP}&text={urllib.parse.quote(m)}", use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-    # SPOTLIGHT BOX REFINADO
     st.markdown(f"""
         <div class="cooler-spotlight">
             <p style="font-size:1.5rem; color:#facc15; font-weight:900; margin-bottom:15px;">🍻 TRAGA MUITA ALEGRIA E SUA BEBIDA</p>
@@ -196,34 +218,19 @@ def render_form():
         </div>
     """, unsafe_allow_html=True)
     
-    # Gestão Discreta
     st.write("")
-    if st.button("🔐 GESTÃO", type="secondary", key="btn_gest_ref"):
+    if st.button("🔐 GESTÃO", type="secondary", key="btn_gest_audio"):
         st.session_state["show_login"] = not st.session_state["show_login"]; st.rerun()
 
     if st.session_state["show_login"]:
         if st.text_input("SENHA", type="password") == st.secrets["admin"]["password"]:
             st.session_state["is_admin"] = True; st.session_state["show_login"] = False; st.rerun()
 
-# =========================================================
-# ADMIN
-# =========================================================
-
-def render_dashboard(df):
-    st.markdown("<h1 style='color:#facc15;'>📊 PLACAR DO QUINTAL</h1>", unsafe_allow_html=True)
-    conf = df[df["Vai Comparecer?"] == "Sim"]
-    total = int(len(conf) + conf["Acompanhantes"].sum())
-    m1, m2, m3 = st.columns(3)
-    m1.metric("TOTAL", total)
-    m2.metric("RSVPs", len(df))
-    m3.metric("NÃO", len(df[df["Vai Comparecer?"] == "Não"]))
-    df_edit = st.data_editor(df, use_container_width=True, num_rows="dynamic")
-    if st.button("💾 SALVAR"):
-        st.connection("gsheets", type=GSheetsConnection).update(data=df_edit); st.success("✅ Salvo!")
-    if st.button("🚪 SAIR"): st.session_state["is_admin"] = False; st.rerun()
-
 def main():
     if st.session_state["is_admin"]: render_dashboard(carregar_dados())
-    else: render_header(); render_form()
+    else: 
+        if render_audio_player():
+            render_header()
+            render_form()
 
 if __name__ == "__main__": main()
