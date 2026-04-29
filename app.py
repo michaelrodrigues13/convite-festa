@@ -203,7 +203,11 @@ def render_form():
             salvar_confirmacao(nome, vai, n, acomps, zap)
             st.success("🎉 Confirmado!")
             st.balloons()
-            m = f"Fala Michael! Confirmado no seu Quintal!\n\nConvidado: {nome}\nAcompanhantes: {len(acomps)}"
+            
+            # Mensagem detalhada para o WhatsApp
+            lista_acomps = ", ".join(filter(None, acomps)) if acomps else "Nenhum"
+            m = f"Fala Michael! Confirmado no seu Quintal!\n\n✅ Convidado: {nome}\n👥 Acompanhantes ({n}): {lista_acomps}"
+            
             st.link_button("🔥 AVISAR NO WHATSAPP", f"https://api.whatsapp.com/send?phone={MEU_WHATSAPP}&text={urllib.parse.quote(m)}", use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
