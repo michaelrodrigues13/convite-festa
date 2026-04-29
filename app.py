@@ -94,6 +94,7 @@ def carregar_dados():
         df = conn.read(ttl=0).dropna(how="all")
         for c in ["Nome do Convidado", "Vai Comparecer?", "Acompanhantes", "Nomes Acompanhantes", "WhatsApp"]:
             if c not in df.columns: df[c] = ""
+        df["Acompanhantes"] = pd.to_numeric(df["Acompanhantes"], errors='coerce').fillna(0).astype(int)
         return df
     except:
         return pd.DataFrame(columns=["Nome do Convidado", "Vai Comparecer?", "Acompanhantes", "Nomes Acompanhantes", "WhatsApp"])
@@ -120,47 +121,32 @@ def render_audio_player():
         return False
     else:
         if samba_b64:
-            # Player Inteligente via HTML/JS
             components.html(f"""
                 <audio id="samba-player" loop autoplay>
                     <source src="data:audio/mp3;base64,{samba_b64}" type="audio/mpeg">
                 </audio>
-                
                 <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px; font-family: sans-serif; color: #facc15;">
                     <span id="music-status" style="font-size: 0.8rem; font-weight: bold;">🔊 TOCANDO SAMBA</span>
                     <button id="mute-btn" onclick="toggleMute()" style="background: rgba(250, 204, 21, 0.2); border: 1px solid #facc15; border-radius: 50%; width: 40px; height: 40px; cursor: pointer; color: #facc15; font-size: 1.2rem; display: flex; align-items: center; justify-content: center; transition: 0.3s;">
                         🔊
                     </button>
                 </div>
-
                 <script>
                     const player = document.getElementById('samba-player');
                     const btn = document.getElementById('mute-btn');
                     const status = document.getElementById('music-status');
-                    
                     function toggleMute() {{
                         if (player.muted) {{
-                            player.muted = false;
-                            btn.innerText = '🔊';
-                            status.innerText = '🔊 TOCANDO SAMBA';
+                            player.muted = false; btn.innerText = '🔊'; status.innerText = '🔊 TOCANDO SAMBA';
                             btn.style.background = 'rgba(250, 204, 21, 0.2)';
                         }} else {{
-                            player.muted = true;
-                            btn.innerText = '🔇';
-                            status.innerText = '🔇 SAMBA MUTADO';
+                            player.muted = true; btn.innerText = '🔇'; status.innerText = '🔇 SAMBA MUTADO';
                             btn.style.background = 'rgba(255, 255, 255, 0.1)';
                         }}
                     }}
-
-                    // LÓGICA DE PAUSA AUTOMÁTICA (SAIR DA ABA)
                     document.addEventListener('visibilitychange', function() {{
-                        if (document.hidden) {{
-                            player.pause();
-                        }} else {{
-                            if (!player.muted) {{
-                                player.play();
-                            }}
-                        }}
+                        if (document.hidden) {{ player.pause(); }} 
+                        else {{ if (!player.muted) {{ player.play(); }} }}
                     }});
                 </script>
             """, height=60)
@@ -208,11 +194,9 @@ def render_form():
         vai = col1.selectbox("Vai colar?", ["Sim", "Não"])
         zap = col2.text_input("WhatsApp com DDD", placeholder="31988887777")
         n = st.slider("Leva mais gente?", 0, 12, 0)
-        
         acomps = []
         if n > 0 and vai == "Sim":
             for i in range(n): acomps.append(st.text_input(f"Acompanhante {i+1}", key=f"g{i}"))
-
         if st.button("CONFIRMAR AGORA 🚀"):
             if len(nome.strip().split()) < 2: st.error("❌ Nome completo!"); return
             if normalizar(nome) in black_list: st.error("❌ Já confirmado!"); return
@@ -238,6 +222,22 @@ def render_form():
     if st.session_state["show_login"]:
         if st.text_input("SENHA", type="password") == st.secrets["admin"]["password"]:
             st.session_state["is_admin"] = True; st.session_state["show_login"] = False; st.rerun()
+
+# =========================================================
+# ADMIN (RESTAURADO)
+# =========================================================
+def render_dashboard(df):
+    st.markdown("<h1 style='color:#facc15;'>📊 PLACAR DO QUINTAL</h1>", unsafe_allow_html=True)
+    conf = df[df["Vai Comparecer?"] == "Sim"]
+    total = int(len(conf) + conf["Acompanhantes"].sum())
+    m1, m2, m3 = st.columns(3)
+    m1.metric("TOTAL", total)
+    m2.metric("RSVPs", len(df))
+    m3.metric("NÃO", len(df[df["Vai Comparecer?"] == "Não"]))
+    df_edit = st.data_editor(df, use_container_width=True, num_rows="dynamic")
+    if st.button("💾 SALVAR"):
+        st.connection("gsheets", type=GSheetsConnection).update(data=df_edit); st.success("✅ Salvo!")
+    if st.button("🚪 SAIR"): st.session_state["is_admin"] = False; st.rerun()
 
 def main():
     if st.session_state["is_admin"]: render_dashboard(carregar_dados())
