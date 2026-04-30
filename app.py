@@ -504,6 +504,14 @@ def render_form():
 # ADMIN (RESTAURADO)
 # =========================================================
 def render_dashboard(df):
+    st.title("📊 Gestão do Quintal")
+    
+    col_btn, col_empty = st.columns([1, 3])
+    if col_btn.button("🔄 ATUALIZAR LISTA AGORA", type="primary", use_container_width=True):
+        st.cache_data.clear()
+        st.rerun()
+    
+    st.write("---")
     st.markdown("<h1 style='color:#facc15;'>📊 PLACAR DO QUINTAL</h1>", unsafe_allow_html=True)
     conf = df[df["Vai Comparecer?"] == "Sim"]
     total = int(len(conf) + conf["Acompanhantes"].sum())
