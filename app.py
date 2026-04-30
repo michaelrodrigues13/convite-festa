@@ -325,7 +325,7 @@ def render_countdown():
         margin: 10px auto 30px auto;
     ">
         <p style="color:#facc15;font-weight:700;font-size:0.85rem;letter-spacing:5px;margin:0 0 16px;">⏳ FALTAM PARA O QUINTAL</p>
-        <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;">
+        <div style="display:flex;justify-content:center;gap:6px;flex-wrap:nowrap;">
             <div class="cb"><span id="cd-d" class="cn">--</span><span class="cl">DIAS</span></div>
             <div class="cb"><span id="cd-h" class="cn">--</span><span class="cl">HORAS</span></div>
             <div class="cb"><span id="cd-m" class="cn">--</span><span class="cl">MIN</span></div>
@@ -333,7 +333,7 @@ def render_countdown():
         </div>
     </div>
     <style>
-    .cb {{ display:flex;flex-direction:column;align-items:center;background:rgba(0,0,0,0.5);border:1px solid rgba(250,204,21,0.15);border-radius:14px;padding:14px 10px;min-width:65px;flex:1 1 20%;backdrop-filter:blur(10px);box-shadow:0 4px 15px rgba(0,0,0,0.4); }}
+    .cb {{ display:flex;flex-direction:column;align-items:center;background:rgba(0,0,0,0.5);border:1px solid rgba(250,204,21,0.15);border-radius:14px;padding:12px 6px;min-width:55px;flex:1 1 22%;backdrop-filter:blur(10px);box-shadow:0 4px 15px rgba(0,0,0,0.4); }}
     .cn {{ font-size:clamp(1.6rem, 6vw, 2.2rem);font-weight:900;color:#fff;line-height:1; }}
     .cl {{ font-size:0.65rem;font-weight:700;color:#facc15;letter-spacing:2px;margin-top:6px; }}
     @keyframes tickPop {{ 0%{{transform:scale(1.25);color:#facc15;}} 100%{{transform:scale(1);color:#fff;}} }}
@@ -364,7 +364,7 @@ def render_countdown():
     }}
     tick(); setInterval(tick,1000);
     </script>
-    """, height=165)
+    """, height=180)
 
 def render_header():
     foto_b64 = get_base64_file("foto_micha.jpeg")
