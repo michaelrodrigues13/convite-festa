@@ -418,6 +418,36 @@ def render_header():
     """, unsafe_allow_html=True)
 
 def render_form():
+    if "confirmado" in st.session_state and st.session_state["confirmado"]:
+        st.markdown(f"""
+            <div class="manga-real-card" style="text-align:center; border-left:5px solid #a3e635;">
+                <h2 style="color:#a3e635 !important; font-size:2rem;">✅ CHECK-IN CONCLUÍDO!</h2>
+                <p style="font-size:1.2rem; color:#fff; margin-bottom:20px;">
+                    Boa, <b>{st.session_state['nome_confirmado']}</b>!<br>
+                    Sua presença já está na nossa lista.
+                </p>
+                <p style="color:#facc15; font-weight:700;">AVISE O MICHA NO WHATSAPP ABAIXO: 👇</p>
+            </div>
+        """, unsafe_allow_html=True)
+        st.link_button("🔥 ENVIAR CONFIRMAÇÃO NO WHATSAPP", f"https://api.whatsapp.com/send?phone={MEU_WHATSAPP}&text={urllib.parse.quote(st.session_state['m_whatsapp'])}", use_container_width=True)
+        
+        # Confetti celebration (moved here)
+        components.html("""
+            <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+            <script>
+            (function(){
+                var end = Date.now() + 1500;
+                var colors = ['#facc15','#a3e635','#ffffff','#f59e0b'];
+                (function frame(){
+                    confetti({particleCount:4,angle:60,spread:60,origin:{x:0},colors:colors});
+                    confetti({particleCount:4,angle:120,spread:60,origin:{x:1},colors:colors});
+                    if(Date.now()<end) requestAnimationFrame(frame);
+                })();
+            })();
+            </script>
+        """, height=0)
+        return
+
     db = carregar_dados()
     black_list = set()
     for _, r in db.iterrows():
@@ -438,27 +468,17 @@ def render_form():
         if st.button("🚀 CONFIRMAR MINHA PRESENÇA", type="primary"):
             if len(nome.strip().split()) < 2: st.error("❌ Coloca nome e sobrenome!"); return
             if normalizar(nome) in black_list: st.error("❌ Esse nome já confirmou!"); return
-            salvar_confirmacao(nome, vai, n, acomps, zap)
-            # Confetti celebration
-            components.html("""
-            <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-            <script>
-            (function(){
-                var end = Date.now() + 2500;
-                var colors = ['#facc15','#a3e635','#ffffff','#f59e0b'];
-                (function frame(){
-                    confetti({particleCount:3,angle:60,spread:55,origin:{x:0},colors:colors});
-                    confetti({particleCount:3,angle:120,spread:55,origin:{x:1},colors:colors});
-                    if(Date.now()<end) requestAnimationFrame(frame);
-                })();
-            })();
-            </script>
-            """, height=0)
-            st.success("🎉 Chegou junto! Te vejo no Quintal!")
-            st.balloons()
-            lista_acomps = ", ".join(filter(None, acomps)) if acomps else "Nenhum"
-            m = f"Fala Michael! Confirmado no seu Quintal!\n\n✅ Convidado: {nome}\n👥 Acompanhantes ({n}): {lista_acomps}"
-            st.link_button("🔥 AVISAR NO WHATSAPP", f"https://api.whatsapp.com/send?phone={MEU_WHATSAPP}&text={urllib.parse.quote(m)}", use_container_width=True)
+            
+            with st.status("🥁 Garantindo sua vaga no Quintal...", expanded=True) as status:
+                st.write("📝 Registrando no samba...")
+                salvar_confirmacao(nome, vai, n, acomps, zap)
+                st.write("✅ Presença garantida!")
+                status.update(label="🎉 TUDO CERTO! CONFIRMADO!", state="complete", expanded=False)
+            
+            st.session_state["confirmado"] = True
+            st.session_state["nome_confirmado"] = nome
+            st.session_state["m_whatsapp"] = f"Fala Michael! Confirmado no seu Quintal!\n\n✅ Convidado: {nome}\n👥 Acompanhantes ({n}): {', '.join(filter(None, acomps)) if acomps else 'Nenhum'}"
+            st.rerun()
 
     st.markdown(f"""
         <div class="cooler-spotlight">
