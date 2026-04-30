@@ -381,7 +381,7 @@ def render_header():
         "Traz a alegria que o samba é por nossa conta! 🥁",
         "O quintal tá pronto, só falta a sua presença! 🌳",
         "Bora fazer barulho que o vizinho já tá avisado! 🔊",
-        "A cerveja tá gelando e o samba tá esquentando! 🍺",
+        "Samba, resenha e cerveja gelada! 🍺",
     ]
     frase = random.choice(frases)
     st.markdown(f"""
