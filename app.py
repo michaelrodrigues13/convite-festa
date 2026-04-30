@@ -424,7 +424,6 @@ def render_form():
             if n.strip(): black_list.add(normalizar(n))
 
     with st.container():
-        st.markdown('<div class="manga-real-card">', unsafe_allow_html=True)
         st.markdown("<p style='text-align:center; font-weight:900; color:#facc15; margin-bottom:20px; font-size:1.2rem;'>🍻 CONFIRME SUA PRESENÇA</p>", unsafe_allow_html=True)
         nome = st.text_input("Seu Nome e Sobrenome", placeholder="Ex: Arlindo Cruz")
         col1, col2 = st.columns(2)
@@ -458,7 +457,6 @@ def render_form():
             lista_acomps = ", ".join(filter(None, acomps)) if acomps else "Nenhum"
             m = f"Fala Michael! Confirmado no seu Quintal!\n\n✅ Convidado: {nome}\n👥 Acompanhantes ({n}): {lista_acomps}"
             st.link_button("🔥 AVISAR NO WHATSAPP", f"https://api.whatsapp.com/send?phone={MEU_WHATSAPP}&text={urllib.parse.quote(m)}", use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown(f"""
         <div class="cooler-spotlight">
