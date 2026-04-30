@@ -499,7 +499,7 @@ def render_dashboard(df):
 def render_atracoes():
     st.markdown("""
         <div class="atracao-grid">
-            <div class="atracao-item"><span class="atracao-icon">🎸</span><span class="atracao-label">Samba<br>ao Vivo</span></div>
+            <div class="atracao-item"><span class="atracao-icon">🎸</span><span class="atracao-label">Samba</span></div>
             <div class="atracao-item"><span class="atracao-icon">🍖</span><span class="atracao-label">Churrasco</span></div>
             <div class="atracao-item"><span class="atracao-icon">🍺</span><span class="atracao-label">Cerveja<br>Gelada</span></div>
         </div>
