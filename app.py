@@ -122,10 +122,10 @@ h1, h2, h3 { color: #facc15 !important; font-weight: 900 !important; }
 
 /* ── Título principal com glow pulsante ── */
 .hero-title {
-    font-size: 3.5rem;
+    font-size: clamp(2.5rem, 9vw, 3.8rem);
     font-weight: 900;
     margin: 0;
-    line-height: 1;
+    line-height: 1.1;
     color: #fff;
     animation: glowPulse 3s ease-in-out infinite;
 }
@@ -181,12 +181,14 @@ h1, h2, h3 { color: #facc15 !important; font-weight: 900 !important; }
     animation: floatBadge 2.5s ease-in-out infinite;
 }
 
-/* ── Inputs estilizados ── */
+/* ── Inputs estilizados (Touch Targets aprimorados) ── */
 .stTextInput input, .stSelectbox select {
     background: rgba(255,255,255,0.05) !important;
     border: 1px solid rgba(250,204,21,0.3) !important;
-    border-radius: 10px !important;
+    border-radius: 12px !important;
     color: #fff !important;
+    padding: 14px 16px !important;
+    font-size: 1.05rem !important;
     transition: border-color 0.3s, box-shadow 0.3s;
 }
 .stTextInput input:focus {
@@ -205,24 +207,24 @@ html { scroll-behavior: smooth; }
 
 /* ── Avatar header ── */
 .avatar-ring {
-    width: 120px; height: 120px; border-radius: 50%;
+    width: clamp(100px, 25vw, 130px); height: clamp(100px, 25vw, 130px); border-radius: 50%;
     border: 3px solid #facc15;
     box-shadow: 0 0 25px rgba(250,204,21,0.35), 0 0 60px rgba(250,204,21,0.1);
-    object-fit: cover; margin: 0 auto 15px; display: block;
+    object-fit: cover; margin: 0 auto 20px; display: block;
     animation: fadeInUp 0.5s ease both;
 }
 
 /* ── Seção atrações ── */
-.atracao-grid { display:flex; justify-content:center; gap:16px; flex-wrap:wrap; max-width:600px; margin:0 auto 24px; animation: fadeInUp 0.8s ease both; }
+.atracao-grid { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; max-width:600px; margin:0 auto 24px; animation: fadeInUp 0.8s ease both; }
 .atracao-item {
     background: rgba(0,0,0,0.5); backdrop-filter: blur(15px);
     border: 1px solid rgba(250,204,21,0.2); border-radius: 16px;
-    padding: 18px 14px; text-align: center; flex: 1; min-width: 110px; max-width: 140px;
+    padding: 16px 10px; text-align: center; flex: 1 1 28%; min-width: 95px; max-width: 140px;
     transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
 }
 .atracao-item:hover { transform: translateY(-6px); box-shadow: 0 8px 30px rgba(250,204,21,0.2); border-color: rgba(250,204,21,0.6); }
-.atracao-icon { font-size: 2rem; display: block; margin-bottom: 8px; }
-.atracao-label { font-size: 0.7rem; font-weight: 700; color: #facc15; letter-spacing: 2px; text-transform: uppercase; }
+.atracao-icon { font-size: clamp(1.6rem, 5vw, 2rem); display: block; margin-bottom: 8px; }
+.atracao-label { font-size: 0.75rem; font-weight: 700; color: #facc15; letter-spacing: 1px; text-transform: uppercase; }
 
 /* ── Rodapé premium ── */
 .footer-premium { text-align:center; margin-top:50px; padding:30px 20px; border-top:1px solid rgba(250,204,21,0.15); animation: fadeInUp 1s ease both; }
@@ -337,9 +339,9 @@ def render_countdown():
         </div>
     </div>
     <style>
-    .cb {{ display:flex;flex-direction:column;align-items:center;background:rgba(250,204,21,0.1);border:1px solid rgba(250,204,21,0.3);border-radius:14px;padding:12px 18px;min-width:70px; }}
-    .cn {{ font-size:2.2rem;font-weight:900;color:#fff;line-height:1; }}
-    .cl {{ font-size:0.65rem;font-weight:700;color:#facc15;letter-spacing:3px;margin-top:4px; }}
+    .cb {{ display:flex;flex-direction:column;align-items:center;background:rgba(250,204,21,0.1);border:1px solid rgba(250,204,21,0.3);border-radius:14px;padding:12px;min-width:65px;flex:1 1 20%; }}
+    .cn {{ font-size:clamp(1.6rem, 6vw, 2.2rem);font-weight:900;color:#fff;line-height:1; }}
+    .cl {{ font-size:0.65rem;font-weight:700;color:#facc15;letter-spacing:2px;margin-top:6px; }}
     @keyframes tickPop {{ 0%{{transform:scale(1.25);color:#facc15;}} 100%{{transform:scale(1);color:#fff;}} }}
     .tick {{ animation: tickPop 0.4s ease; }}
     </style>
