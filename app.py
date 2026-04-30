@@ -261,16 +261,7 @@ def salvar_confirmacao(nome, vai, n, lista, zap):
 # =========================================================
 def render_audio_player():
     samba_b64 = get_base64_file(ARQUIVO_SAMBA)
-    
-    if not st.session_state["music_playing"]:
-        st.markdown('<div style="text-align:center; padding: 100px 20px;">', unsafe_allow_html=True)
-        st.markdown("### 🥁 O Samba já vai começar...")
-        if st.button("🥁 ENTRAR NA RODA DE SAMBA", type="primary"):
-            st.session_state["music_playing"] = True
-            st.rerun()
-        st.markdown('</div>', unsafe_allow_html=True)
-        return False
-    else:
+    if st.session_state["music_playing"]:
         if samba_b64:
             components.html(f"""
                 <audio id="samba-player" loop autoplay>
@@ -531,9 +522,18 @@ def render_particles():
 def main():
     if st.session_state["is_admin"]: render_dashboard(carregar_dados())
     else: 
-        if render_audio_player():
-            render_particles()
-            render_header()
+        render_particles()
+        render_header()
+        
+        if not st.session_state["music_playing"]:
+            st.markdown('<div style="text-align:center; padding: 20px;">', unsafe_allow_html=True)
+            st.markdown("<h3 style='color:#facc15; font-weight:900;'>🌳 O portão do Quintal está aberto...</h3>", unsafe_allow_html=True)
+            if st.button("🔓 ENTRAR NO QUINTAL", type="primary"):
+                st.session_state["music_playing"] = True
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
+        else:
+            render_audio_player()
             render_atracoes()
             render_form()
             render_footer()
