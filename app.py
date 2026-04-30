@@ -465,7 +465,9 @@ def render_form():
         n = st.slider("Leva mais gente?", 0, 12, 0)
         acomps = []
         if n > 0 and vai == "Sim":
-            for i in range(n): acomps.append(st.text_input(f"Acompanhante {i+1}", key=f"g{i}"))
+            st.info(f"👇 Por favor, digite o nome das {n} pessoas que vêm com você:")
+            for i in range(n): 
+                acomps.append(st.text_input(f"Nome do Acompanhante {i+1}", key=f"g{i}", placeholder="Nome Completo"))
         if st.button("🚀 CONFIRMAR MINHA PRESENÇA", type="primary"):
             if len(nome.strip().split()) < 2: st.error("❌ Coloca nome e sobrenome!"); return
             if normalizar(nome) in black_list: st.error("❌ Esse nome já confirmou!"); return
@@ -478,7 +480,8 @@ def render_form():
             
             st.session_state["confirmado"] = True
             st.session_state["nome_confirmado"] = nome
-            st.session_state["m_whatsapp"] = f"Fala Michael! Confirmado no seu Quintal!\n\n✅ Convidado: {nome}\n👥 Acompanhantes ({n}): {', '.join(filter(None, acomps)) if acomps else 'Nenhum'}"
+            lista_nomes = ", ".join(filter(None, acomps))
+            st.session_state["m_whatsapp"] = f"Fala Michael! Confirmado no seu Quintal!\n\n✅ Convidado: {nome}\n👥 Total de Acompanhantes: {n}\n📝 Nomes: {lista_nomes if lista_nomes else 'Não informados'}"
             st.rerun()
 
     st.markdown(f"""
