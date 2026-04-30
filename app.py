@@ -239,11 +239,11 @@ footer, header, #MainMenu { visibility: hidden; }
 def normalizar(t):
     return "".join(c for c in unicodedata.normalize('NFD', str(t).strip().lower()) if unicodedata.category(c) != 'Mn') if t else ""
 
-@st.cache_data(ttl=120)
+@st.cache_data(ttl=600)
 def carregar_dados():
     try:
         conn = st.connection("gsheets", type=GSheetsConnection)
-        df = conn.read(ttl=120).dropna(how="all")
+        df = conn.read(ttl=600).dropna(how="all")
         for c in ["Nome do Convidado", "Vai Comparecer?", "Acompanhantes", "Nomes Acompanhantes", "WhatsApp"]:
             if c not in df.columns: df[c] = ""
         df["Acompanhantes"] = pd.to_numeric(df["Acompanhantes"], errors='coerce').fillna(0).astype(int)
@@ -447,13 +447,14 @@ def render_form():
             </script>
         """, height=0)
         return
-
-    db = carregar_dados()
-    black_list = set()
-    for _, r in db.iterrows():
-        black_list.add(normalizar(r["Nome do Convidado"]))
-        for n in str(r["Nomes Acompanhantes"]).split(","):
-            if n.strip(): black_list.add(normalizar(n))
+    
+    with st.spinner("🎸 Sintonizando o Quintal..."):
+        db = carregar_dados()
+        black_list = set()
+        for _, r in db.iterrows():
+            black_list.add(normalizar(r["Nome do Convidado"]))
+            for n in str(r["Nomes Acompanhantes"]).split(","):
+                if n.strip(): black_list.add(normalizar(n))
 
     with st.container():
         st.markdown("<p style='text-align:center; font-weight:900; color:#facc15; margin-bottom:20px; font-size:1.2rem;'>🍻 CONFIRME SUA PRESENÇA</p>", unsafe_allow_html=True)
