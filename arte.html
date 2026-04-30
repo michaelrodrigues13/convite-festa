@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arte - Quintal do Micha</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
+        
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Container no formato Retrato */
+        .art-container {
+            position: relative;
+            width: 1080px;
+            max-width: 100vw;
+            aspect-ratio: 4 / 5;
+            background-image: url('foto_micha.jpeg'); /* CORRIGIDO AQUI */
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
+            border: 2px solid #facc15;
+        }
+
+        .gradient-overlay {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 65%;
+            background: linear-gradient(to top, rgba(10, 10, 10, 1) 0%, rgba(10, 10, 10, 0.9) 30%, rgba(10, 10, 10, 0) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 50px;
+            text-align: center;
+        }
+
+        .sub-title {
+            color: #facc15;
+            font-size: 2.5vw;
+            font-weight: 700;
+            letter-spacing: 6px;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.9);
+        }
+
+        .main-title {
+            color: #ffffff;
+            font-size: 7vw;
+            font-weight: 900;
+            margin: 0;
+            line-height: 1;
+            text-shadow: 4px 4px 20px rgba(0,0,0,1);
+        }
+
+        .date {
+            color: #a3e635;
+            font-size: 3vw;
+            font-weight: 900;
+            margin-top: 15px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.9);
+        }
+
+        .cta {
+            color: #facc15;
+            font-size: 1.8vw;
+            font-weight: 700;
+            margin-top: 35px;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 15px 30px;
+            border-radius: 30px;
+            border: 1px dashed rgba(250, 204, 21, 0.5);
+            line-height: 1.4;
+        }
+
+        .link-text {
+            color: #ffffff;
+            font-size: 1.4vw;
+            text-transform: lowercase;
+            font-weight: 400;
+            letter-spacing: 1px;
+            display: block;
+            margin-top: 5px;
+        }
+
+        @media (min-width: 1080px) {
+            .sub-title { font-size: 27px; }
+            .main-title { font-size: 75px; }
+            .date { font-size: 32px; }
+            .cta { font-size: 20px; }
+            .link-text { font-size: 16px; }
+        }
+
+        .instructions {
+            position: fixed;
+            top: 20px;
+            background: #fff;
+            padding: 15px 25px;
+            border-radius: 10px;
+            color: #000;
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 100;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="instructions" onclick="this.style.display='none'">
+        📸 AGORA SIM! TIRE O SEU PRINT!<br>
+        <small style="font-weight:normal;">(Clique aqui para esconder este aviso antes de tirar o Print)</small>
+    </div>
+
+    <div class="art-container">
+        <div class="gradient-overlay">
+            <div class="sub-title">NOS BRAÇOS DA BATUCADA</div>
+            <div class="main-title">QUINTAL DO MICHA</div>
+            <div class="date">17 MAIO | DOM. ÀS 13:00H</div>
+            <div class="cta">
+                CONFIRME SUA PRESENÇA ACESSANDO O SITE:
+                <span class="link-text">convite-festa-kdqetm6a95vnqfnkzvfacq.streamlit.app</span>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
