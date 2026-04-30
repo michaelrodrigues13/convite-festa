@@ -239,10 +239,11 @@ footer, header, #MainMenu { visibility: hidden; }
 def normalizar(t):
     return "".join(c for c in unicodedata.normalize('NFD', str(t).strip().lower()) if unicodedata.category(c) != 'Mn') if t else ""
 
+@st.cache_data(ttl=120)
 def carregar_dados():
     try:
         conn = st.connection("gsheets", type=GSheetsConnection)
-        df = conn.read(ttl=0).dropna(how="all")
+        df = conn.read(ttl=120).dropna(how="all")
         for c in ["Nome do Convidado", "Vai Comparecer?", "Acompanhantes", "Nomes Acompanhantes", "WhatsApp"]:
             if c not in df.columns: df[c] = ""
         df["Acompanhantes"] = pd.to_numeric(df["Acompanhantes"], errors='coerce').fillna(0).astype(int)
@@ -251,6 +252,7 @@ def carregar_dados():
         return pd.DataFrame(columns=["Nome do Convidado", "Vai Comparecer?", "Acompanhantes", "Nomes Acompanhantes", "WhatsApp"])
 
 def salvar_confirmacao(nome, vai, n, lista, zap):
+    st.cache_data.clear() # Limpa o cache para ler a versão mais recente antes de salvar
     conn = st.connection("gsheets", type=GSheetsConnection)
     df = carregar_dados()
     linha = pd.DataFrame([{"Nome do Convidado": nome.strip().title(), "Vai Comparecer?": vai, "Acompanhantes": n, "Nomes Acompanhantes": ", ".join(lista).title(), "WhatsApp": zap.strip()}])
