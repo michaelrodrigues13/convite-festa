@@ -320,17 +320,11 @@ def render_countdown():
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@900&display=swap" rel="stylesheet">
     <div id="countdown-wrap" style="
         font-family:'Outfit',sans-serif;
-        background: rgba(0,0,0,0.55);
-        backdrop-filter: blur(20px);
-        border: 1px solid rgba(250,204,21,0.35);
-        border-radius: 20px;
-        padding: 22px 10px;
         text-align: center;
         max-width: 560px;
-        margin: 0 auto 18px auto;
-        box-shadow: 0 0 30px rgba(250,204,21,0.12);
+        margin: 10px auto 30px auto;
     ">
-        <p style="color:#facc15;font-weight:700;font-size:0.85rem;letter-spacing:5px;margin:0 0 12px;">⏳ FALTAM PARA O QUINTAL</p>
+        <p style="color:#facc15;font-weight:700;font-size:0.85rem;letter-spacing:5px;margin:0 0 16px;">⏳ FALTAM PARA O QUINTAL</p>
         <div style="display:flex;justify-content:center;gap:14px;flex-wrap:wrap;">
             <div class="cb"><span id="cd-d" class="cn">--</span><span class="cl">DIAS</span></div>
             <div class="cb"><span id="cd-h" class="cn">--</span><span class="cl">HORAS</span></div>
@@ -339,7 +333,7 @@ def render_countdown():
         </div>
     </div>
     <style>
-    .cb {{ display:flex;flex-direction:column;align-items:center;background:rgba(250,204,21,0.1);border:1px solid rgba(250,204,21,0.3);border-radius:14px;padding:12px;min-width:65px;flex:1 1 20%; }}
+    .cb {{ display:flex;flex-direction:column;align-items:center;background:rgba(0,0,0,0.5);border:1px solid rgba(250,204,21,0.15);border-radius:14px;padding:14px 10px;min-width:65px;flex:1 1 20%;backdrop-filter:blur(10px);box-shadow:0 4px 15px rgba(0,0,0,0.4); }}
     .cn {{ font-size:clamp(1.6rem, 6vw, 2.2rem);font-weight:900;color:#fff;line-height:1; }}
     .cl {{ font-size:0.65rem;font-weight:700;color:#facc15;letter-spacing:2px;margin-top:6px; }}
     @keyframes tickPop {{ 0%{{transform:scale(1.25);color:#facc15;}} 100%{{transform:scale(1);color:#fff;}} }}
@@ -396,13 +390,13 @@ def render_header():
         </div>
     """, unsafe_allow_html=True)
 
-    render_countdown()
-
     st.markdown(f"""
-        <p style="text-align:center; color:rgba(255,255,255,0.6); font-style:italic; font-size:0.95rem; margin:-5px 0 20px; animation: fadeInUp 1s ease both;">
+        <p style="text-align:center; color:rgba(255,255,255,0.75); font-style:italic; font-size:1.1rem; margin-top:5px; margin-bottom: 25px; animation: fadeInUp 1s ease both;">
             "{frase}"
         </p>
     """, unsafe_allow_html=True)
+
+    render_countdown()
     
     st.markdown(f"""
         <div class="manga-real-card" style="animation-delay:0.2s;">
